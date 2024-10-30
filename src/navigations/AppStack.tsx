@@ -1,8 +1,16 @@
-import {screens} from '@/constants/screens.constant';
+import {tabScreens} from '@/constants/screens.constant';
 import colors from '@/themes/colors';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {ParamListBase, RouteProp} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+
+type CustomRouteProp = RouteProp<ParamListBase, string> & {
+  state?: {
+    index: number;
+    router: Array<any>;
+  };
+};
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +23,7 @@ const AppStack = (): JSX.Element => {
         tabBarInactiveTintColor: colors.gray[700],
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: 'normal',
+          fontWeight: '600',
         },
         tabBarStyle: {
           paddingBottom: 15,
@@ -25,11 +33,29 @@ const AppStack = (): JSX.Element => {
           shadowOpacity: 0,
         },
       }}>
-      {screens.map(screen => (
+      {tabScreens.map(screen => (
         <Tab.Screen
           key={screen.label}
           name={screen.label}
           component={screen.component}
+          listeners={({
+            navigation,
+            route,
+          }: {
+            navigation: any;
+            route: CustomRouteProp;
+          }) => ({
+            tabPress: e => {
+              const shouldBeUpdate = route?.state && route.state.index !== 0;
+
+              if (route.name == 'Profile' && shouldBeUpdate) {
+                navigation.reset({index: 0, routes: [{name: 'Profile'}]});
+              }
+              if (route.name == 'Workspace' && shouldBeUpdate) {
+                navigation.reset({index: 0, routes: [{name: 'Workspace'}]});
+              }
+            },
+          })}
           options={{
             tabBarIcon: ({focused, color}) => {
               const IconComponent = screen.icon;

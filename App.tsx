@@ -5,8 +5,9 @@
  * @format
  */
 
+import {AuthContextProvider} from '@/contexts/auth.context';
 import AppNavigation from '@/navigations/AppNavigation';
-import Login from '@/screens/Login';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import React from 'react';
 import {
   SafeAreaView,
@@ -15,6 +16,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {ToastProvider} from 'react-native-toast-notifications';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -29,10 +31,17 @@ function App(): React.JSX.Element {
     <SafeAreaView style={[backgroundStyle, styles.container]}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={'transparent'}
+        translucent={true}
       />
       <GestureHandlerRootView style={styles.container}>
-        <AppNavigation />
+        <BottomSheetModalProvider>
+          <ToastProvider>
+            <AuthContextProvider>
+              <AppNavigation />
+            </AuthContextProvider>
+          </ToastProvider>
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </SafeAreaView>
   );
